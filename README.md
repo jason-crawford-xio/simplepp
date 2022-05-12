@@ -42,4 +42,11 @@ will convert lines like
 # installation
 ```
      npm install --global  simplepp
+     simplepp --from src  --to dist/cjs  +cjs  -mjs
 ```
+or
+```
+     yarn add --dev  simplepp
+     npx simplepp --from src  --to dist/cjs  +cjs  -mjs
+```
+

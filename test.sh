@@ -30,8 +30,8 @@ fi
 
 $NODECMD bin/simplepp --from testfiles/testfiles/test1.js -mjs +cjs     >actual.plus.cjs.minus.mjs.txt
 $NODECMD bin/simplepp --from testfiles/testfiles/test1.js -cjs +mjs     >actual.plus.mjs.minus.cjs.txt
-$NODECMD bin/simplepp --from testfiles/testfiles          -cjs +mjs --to actualfiles.plus.mjs.minus.cjs
-$NODECMD bin/simplepp --from testfiles/testfiles          +cjs -mjs --to actualfiles.plus.cjs.minus.mjs
+$NODECMD bin/simplepp --from testfiles/testfiles          -cjs +mjs --to actualfiles.plus.mjs.minus.cjs  --package-type module
+$NODECMD bin/simplepp --from testfiles/testfiles          +cjs -mjs --to actualfiles.plus.cjs.minus.mjs  --package-type commonjs
 
 DIFFCMD1="diff actual.plus.cjs.minus.mjs.txt      testfiles/expected.plus.cjs.minus.mjs/test1.js"
 DIFFCMD2="diff actual.plus.mjs.minus.cjs.txt      testfiles/expected.plus.mjs.minus.cjs/test1.js"

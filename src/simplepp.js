@@ -76,6 +76,7 @@ function recursivelyCopyFiles(fromFile, toFile, uncomments, recomments, maxDepth
 function start() {
   let fromFile;
   let toFile;
+  let packageTypeOut; 
   let recomments = [];
   let uncomments = [];
 
@@ -119,6 +120,12 @@ function start() {
             toFile = filename;
           } else {
           }
+        } else if (opt === '--package-type') {
+          ii++;
+          if (ii===argv.length) throw new Error('missing parameter after '+opt);
+          let filetypeParam = argv[ii];
+          if (!['commonjs','module'].includes(filetypeParam)) throw new Error('unfamiliar file type: '+filetypeParam);
+          packageTypeOut = filetypeParam;
         } else {
           throw new Error('unfamiliar parameter: '+opt);
         }
@@ -172,6 +179,22 @@ function start() {
         // no problem.  We'll route to stdout
       }
     }
+    if (packageTypeOut) {
+      if (toFile) {
+        if (!fs.existsSync(toFile)) {
+          // no problem.  We'll probably create it.
+        } else {
+          if (fs.lstatSync(toFile).isDirectory()) {
+            // no problem.  We'll probably create it.
+          } else {
+            throw new Error('--to parameter must be a directory if the --package-type is specified')  // no problem.  We'll route to stdout
+          }
+        }
+      } else {
+        throw new Error('--to directory must be specified if the --package-type is specified')  // no problem.  We'll route to stdout
+      }
+        
+    }
   } catch (exc) {
     console.log(exc.message);
     console.log('Usage');
@@ -186,6 +209,15 @@ function start() {
         // we will need some special handling
         // assert: as a result of earlier checks we know that toFile is a directory or non-existant.
         recursivelyCopyFiles(fromFile, toFile, uncomments, recomments )
+        if (packageTypeOut) { // we'll also place a package.json file in the destination
+          let toPackageJson = toFile+'/package.json';
+          if (fs.existsSync(toPackageJson)) {
+            // do nothing.  We don't want to overwrite something that might be of value.
+            throw new Error('should not specify --package-type if package.json already exists at the destination')
+          } else {
+            fs.writeFileSync(toPackageJson, JSON.stringify({type:packageTypeOut}));
+          }
+        }
       } else {
         copyFiles(fromFile, toFile, uncomments, recomments);
       }
